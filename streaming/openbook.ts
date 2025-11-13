@@ -35,13 +35,23 @@ import { BufferRingBuffer } from "../buffer/buffer";
 export const bufferRing = new BufferRingBuffer(5000);
 
 export async function streamOpenbook(client:Client) {
-  const stream = await client.subscribe();
-  // Collecting all incoming events.
-  stream.on("data", (data) => {
-    if (data.account != undefined) {
-      bufferRing.enqueue(data.account.account.data);
-    }
-  });
+  try {
+    const stream = await client.subscribe();
+    
+    stream.on("error", (error) => {
+      logger.error(`Openbook stream error: ${error}`);
+      logger.info('Openbook stream connection lost. Attempting to reconnect...');
+      setTimeout(() => {
+        streamOpenbook(client).catch((err) => logger.error(`Reconnect failed: ${err}`));
+      }, 5000);
+    });
+    
+    // Collecting all incoming events.
+    stream.on("data", (data) => {
+      if (data.account != undefined) {
+        bufferRing.enqueue(data.account.account.data);
+      }
+    });
 
   const openBookRequest: SubscribeRequest = {
     "slots": {},
@@ -76,7 +86,11 @@ export async function streamOpenbook(client:Client) {
       }
     });
   }).catch((reason) => {
-    console.error(reason);
+    logger.error(`Failed to subscribe to Openbook stream: ${reason}`);
     throw reason;
   });
+  } catch (error) {
+    logger.error(`Error in streamOpenbook: ${error}`);
+    throw error;
+  }
 }
