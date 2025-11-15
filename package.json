@@ -6,7 +6,7 @@
     "start": "ts-node main.ts"
   },
   "dependencies": {
-    "@notrainer/nobtrainer-sdk": "^1.0.3",
+    "@notrainer/nobtrainer-sdk": "^1.0.5",
     "@project-serum/serum": "^0.13.65",
     "@raydium-io/raydium-sdk": "^1.3.1-beta.47",
     "@solana/spl-token": "^0.4.0",
