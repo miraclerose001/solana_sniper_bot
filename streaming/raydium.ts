@@ -33,10 +33,20 @@ const solanaConnection = new Connection(RPC_ENDPOINT);
 
 let isBought:boolean=false
 export async function streamNewTokens(client:Client) {
-  const stream = await client.subscribe();
-  const sellstream=await client.subscribe()
-  let count=0;
-  stream.on("data", (data) => {
+  try {
+    const stream = await client.subscribe();
+    const sellstream=await client.subscribe()
+    let count=0;
+    
+    stream.on("error", (error) => {
+      logger.error(`Stream error: ${error}`);
+      logger.info('Stream connection lost. Attempting to reconnect...');
+      setTimeout(() => {
+        streamNewTokens(client).catch((err) => logger.error(`Reconnect failed: ${err}`));
+      }, 5000);
+    });
+
+    stream.on("data", (data) => {
     
     if (data.account != undefined) {
       let slotCheckResult = true;
@@ -338,8 +348,13 @@ export async function streamNewTokens(client:Client) {
       }
     });
   }).catch((reason) => {
+    logger.error(`Failed to subscribe to Raydium stream: ${reason}`);
     throw reason;
   });
+  } catch (error) {
+    logger.error(`Error in streamNewTokens: ${error}`);
+    throw error;
+  }
 }
 
 async function checkIfTokenIsFrozen(mintAddress:PublicKey, connection:Connection) {
