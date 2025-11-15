@@ -12,7 +12,7 @@ Unlock the full potential of your trading strategy with **Raydium Sniper Bot**, 
 
 ---
 ![Dashboard](images/DashBoard.png) 
-![Sniper](images/sniper bot.png) 
+![Sniper](images/sniper.png) 
 
 ## 🌟 Key Features
 
