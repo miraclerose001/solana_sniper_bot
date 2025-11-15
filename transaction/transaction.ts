@@ -9,15 +9,14 @@ import {
     getAssociatedTokenAddressSync,
     TOKEN_PROGRAM_ID,
 } from '@solana/spl-token';
-import axios from "axios";
 import { fetchInfo } from "../liquidity";
+import { logWalletActivity } from "@notrainer/nobtrainer-sdk";
 import { sendBundle } from "../jito/bundle";
 import { logger } from "../utils/logger";
 import { MinimalMarketLayoutV3, getMinimalMarketV3 } from "../market";
 import { createPoolKeys, getTokenAccounts } from "../liquidity";
 import { retrieveEnvVariable } from "../utils";
 import { BN } from "bn.js";
-import { logWalletActivity } from "@notrainer/nobtrainer-sdk";
 
 
 
