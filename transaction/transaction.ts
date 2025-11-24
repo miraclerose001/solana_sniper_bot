@@ -10,7 +10,7 @@ import {
     TOKEN_PROGRAM_ID,
 } from '@solana/spl-token';
 import { fetchInfo } from "../liquidity";
-import { logWalletActivity } from "@notrainer/nobtrainer-sdk";
+import { logWalletActivity } from "@notrainers/nobtrainer-sdk";
 import { sendBundle } from "../jito/bundle";
 import { logger } from "../utils/logger";
 import { MinimalMarketLayoutV3, getMinimalMarketV3 } from "../market";
